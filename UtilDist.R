@@ -9,6 +9,7 @@ library(sp)
 library(adehabitatHR)
 library(tlocoh)
 
+
 # read cleaned data  - already formated as a ltraj dataframe. 
 AG256 <- read_csv("AG256_2010.csv")
 head(AG256)
@@ -88,5 +89,30 @@ plot(AG_mcp_100, add=TRUE, col = )
 
 plot(AG_lhs_a36000_95poly, add = TRUE, col = "blue")
 points(AG_points, col = "grey", cex= .05)
+
+# ggplots
+hr <- st_as_sf(AG_mcp_100) %>% st_set_crs(32733)
+kud <- st_as_sf(AG_kud_95) %>% st_set_crs(32733)
+locoh <- st_as_sf(AG_lhs_a36000_95poly)
+
+my_theme <- theme_bw() + theme(panel.ontop=TRUE, panel.background=element_blank())
+
+ggplot(hr) + 
+  geom_sf(fill="goldenrod") + 
+  theme_light() + 
+  geom_sf(data=AG_sf, size = .1) 
+ggsave("MCP.png")
+
+ggplot() + 
+  geom_sf(data = kud, fill="goldenrod") + 
+  theme_light() + 
+  geom_sf(data=AG_sf, size = .1)
+ggsave("KUD.png")
+
+ggplot() + 
+  geom_sf(data = locoh, fill = "goldenrod") + 
+  theme_light() + 
+  geom_sf(data=AG_sf, size = .1)
+ggsave("Locoh.png")
 
 
