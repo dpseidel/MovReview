@@ -16,10 +16,13 @@ head(AG256)
 
 # isolate lat and long points for adehabitatHR home range metrics
 AG_sf <- st_as_sf(AG256, coords=c("x","y"), na.fail=FALSE, crs = 32733) # UTM Zone 33S
-AG_points <- AG_sf %>% na.omit %>% st_coordinates %>% SpatialPoints() # Adehabitat requires Spatial objects. 
+AG_wet <- AG_sf %>% filter(date < dmy("15-04-2010"), date > dmy("15-02-2010"))
+AG_points <- AG_wet %>% na.omit %>% st_coordinates %>% SpatialPoints() # Adehabitat requires Spatial objects. 
 
 # plot
 plot(AG_points)
+
+
 
 # MCP
 AG_mcp_100 <- mcp(AG_points, 100)
@@ -40,8 +43,8 @@ points(AG_points, col = "green", cex= .3)
 ## Create convex hulls from the maximum number of nearest neighbors such that
 ## the sum of their distances is less than or equal to a
 # using package t-locoh with s=0 is much faster than adehabitatHR `locoh.a` function
-AG_coords <- AG_sf %>% na.omit %>% st_coordinates 
-AG_time <- AG_sf %>% na.omit %>% pull(date)
+AG_coords <- AG_wet %>% na.omit %>% st_coordinates 
+AG_time <- AG_wet %>% na.omit %>% pull(date)
 
 AG_lxy <- xyt.lxy(xy= AG_coords, dt= AG_time, id="AG256", proj4string=CRS("+proj=utm +south +zone=33 +ellps=WGS84"))
 AG_lxy <- lxy.nn.add(AG_lxy, s=0, k = 45)
@@ -68,15 +71,15 @@ AG_lhs_k30_95poly <- AG_iso_k30$AG256.pts10791.k30.s0.kmin0$isos$`iso.srt-area.i
 plot(AG_lhs_k30_95poly)
 
 # compared to Locoh.a, 
-AG_lxy_a <- lxy.nn.add(AG_lxy, s=0, a = 40000)
-AG_lhs_a <- lxy.lhs(AG_lxy_a, a=seq(20000,40000,2000), s=0)
+AG_lxy_a <- lxy.nn.add(AG_lxy, s=0, a = 80000)
+AG_lhs_a <- lxy.lhs(AG_lxy_a, a=seq(30000,80000,5000), s=0)
 AG_isos_a <- lhs.iso.add(AG_lhs_a)
 lhs.plot.isoarea(AG_isos_a)
 lhs.plot.isoear(AG_isos_a)
 
-AG_lhs_a36000 <- lhs.select(AG_lhs_a, a=36000)
+AG_lhs_a36000 <- lhs.select(AG_lhs_a, a=75000)
 AG_iso_a36000 <- lhs.iso.add(AG_lhs_a36000)
-AG_lhs_a36000_95poly <- AG_iso_a36000$AG256.pts10791.a36000.s0.kmin0$isos$`iso.srt-nep.iso-q.h10791.i5`$polys[5,]
+AG_lhs_a36000_95poly <- AG_iso_a36000[[1]]$isos[[1]]$polys[5]
 plot(AG_lhs_a36000_95poly)
 
 # For figure
@@ -95,24 +98,43 @@ hr <- st_as_sf(AG_mcp_100) %>% st_set_crs(32733)
 kud <- st_as_sf(AG_kud_95) %>% st_set_crs(32733)
 locoh <- st_as_sf(AG_lhs_a36000_95poly)
 
-my_theme <- theme_bw() + theme(panel.ontop=TRUE, panel.background=element_blank())
+hr_plot <- ggplot(hr) + 
+  geom_sf(fill = "#9ecae1") + theme_light() + 
+  theme(axis.text = element_text(size = 20),
+        plot.title = element_text(size = 28, hjust = 0.5)) +
+  ggtitle("100% Minimum Convex Polygon") +
+  geom_sf(data=AG_wet, size = .1) 
+ggsave("MCP.eps", plot = hr_plot, width = 10, h = 8, units = "in")
 
-ggplot(hr) + 
-  geom_sf(fill="goldenrod") + 
+kud_plot <- ggplot() + 
+  geom_sf(data = kud, fill="#9ecae1") + 
+  my_theme +
+  ggtitle("95% Kernel Utilization Distribution") +
+  geom_sf(data=AG_wet, size = .1)
+ggsave("KUD.eps", plot = kud_plot, width = 10, h = 8, units = "in")
+
+locoh_plot <- ggplot() + 
+  geom_sf(data = locoh, fill = "#9ecae1") + 
   theme_light() + 
-  geom_sf(data=AG_sf, size = .1) 
-ggsave("MCP.png")
+  theme(axis.text = element_text(size = 20),
+        plot.title = element_text(size = 28, hjust = 0.5)) +
+  ggtitle("95% fixed a-LoCoH, a=36000m") +
+  geom_sf(data=AG_wet, size = .1)
+ggsave("Locoh.eps", plot = locoh_plot, width = 10, h = 8, units = "in")
 
-ggplot() + 
-  geom_sf(data = kud, fill="goldenrod") + 
-  theme_light() + 
-  geom_sf(data=AG_sf, size = .1)
-ggsave("KUD.png")
+### gridless
+png(file = "MCP.png")
+plot(st_geometry(hr), col="#9ecae1")
+points(st_coordinates(AG_wet), cex=.1)
+dev.off()
 
-ggplot() + 
-  geom_sf(data = locoh, fill = "goldenrod") + 
-  theme_light() + 
-  geom_sf(data=AG_sf, size = .1)
-ggsave("Locoh.png")
+png(file = "KUD.png")
+plot(st_geometry(kud), col="#9ecae1")
+points(st_coordinates(AG_wet), cex=.1)
+dev.off()
 
+png(file = "LoCoh.png")
+plot(st_geometry(locoh), col="#9ecae1")
+points(st_coordinates(AG_wet), cex=.1)
+dev.off()
 

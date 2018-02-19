@@ -6,14 +6,15 @@
 library(tidyverse)
 library(sf)
 library(moveHMM)
+library(lubridate)
 
 # read cleaned data  - already formated as a ltraj dataframe. 
 AG256 <- read_csv("AG256_2010.csv") 
 # make it a spatial object
 AG_sf <- st_as_sf(AG256, coords=c("x","y"), na.fail=FALSE, crs = 32733) # UTM Zone 33S
-head(AG_sf)
+AG_wet <- AG_sf %>% filter(date < dmy("15-04-2010"), date > dmy("15-02-2010"))
 
-AG_coords <- st_coordinates(AG_sf) %>% as.tibble(.)/1000 # convert to km for interpretability
+AG_coords <- st_coordinates(AG_wet) %>% as.tibble(.)/1000 # convert to km for interpretability
 
 data <- prepData(AG_coords, type="UTM", coordNames =  c("X","Y"))
 
