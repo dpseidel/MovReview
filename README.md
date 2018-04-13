@@ -1,7 +1,7 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1185383.svg)](https://doi.org/10.5281/zenodo.1185383)
 
 
-Movement Ecology at the Human-Wildlife Interface: Reproducible Examples
+Ecological methods and metrics for GPS movement data: Reproducible Examples
 =======================================================================
 
 This package contains the source code, analysis, and figures from my 
