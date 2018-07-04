@@ -5,8 +5,8 @@ Ecological methods and metrics for GPS movement data: Reproducible Examples
 =======================================================================
 
 This package contains the source code, analysis, and figures from my 
-review with Eric Dougherty and Wayne Getz, submitted for consideration to IJGIS 
-in February 2018. 
+review with Eric Dougherty, Colin Carlson, and Wayne M. Getz, submitted for
+consideration to IJGIS in February 2018, accepted in July 2018. 
 
 - Author: Dana Seidel 
 - License: [CC0](http://creativecommons.org/publicdomain/zero/1.0/)
