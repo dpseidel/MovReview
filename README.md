@@ -1,15 +1,17 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1185383.svg)](https://doi.org/10.5281/zenodo.1185383)
 
-
-Ecological methods and metrics for GPS movement data: Reproducible Examples
+Ecological metrics and methods for GPS movement data: Reproducible Examples
 =======================================================================
 
 This package contains the source code, analysis, and figures from my 
 review with Eric Dougherty, Colin Carlson, and Wayne M. Getz, submitted for
-consideration to IJGIS in February 2018, accepted in July 2018. 
+consideration to the International Journal of Geographical Information Science
+in February 2018, accepted in July 2018. 
 
 - Author: Dana Seidel 
 - License: [CC0](http://creativecommons.org/publicdomain/zero/1.0/)
+
+The associated review can be found [here](https://doi.org/10.1080/13658816.2018.1498097).
 
 ## Files
 - `Behavior.R` --  Script for fitting an intercept-only HMM. Used to produce Fig 1.
